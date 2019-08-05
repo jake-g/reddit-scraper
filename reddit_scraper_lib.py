@@ -1,7 +1,12 @@
-import pandas as pd
+import glob
+import logging
+import os
 from urllib.parse import urlparse, parse_qs
+
+import pandas as pd
 import praw
 
+from audioscrape import download_track, valid_url
 
 
 class Playlist(object):
@@ -134,8 +139,6 @@ class Fetcher(object):
 
     def __str__(self):
         return '%s Fetcher with API instance: %s' % (self.provider.title(), self.api)
-
-
 
 
 class RedditFetcher(Fetcher):
@@ -276,6 +279,7 @@ def get_yt_video_id(url):
     else:
         raise ValueError
 
+
 def title_similarity_score(str1, str2):
     """Jaccard similarity score of two titles, between 0 and 100 where 100 is identical.
 
@@ -308,3 +312,31 @@ def title_similarity_score(str1, str2):
         overlap = str1_toks.intersection(str2_toks)
         jaccard_score = int(100 * float(len(overlap)) / (len(str1_toks) + len(str2_toks) - len(overlap)))
         return jaccard_score
+
+
+def download_url(url, opts):
+    try:
+        if valid_url(url):
+            download_track(str(url), opts)
+        else:
+            logging.warning('Skipping invalid url: %s' % url)
+    except Exception as e:
+        logging.error('Failed to download url: %s...\n%s' % (url, e))
+
+def check_cache(search_str, cache_dir):
+    logging.debug('Looking in cache (%s) for %s...' % (cache_dir, search_str))
+    cached_queries = glob.glob(os.path.join(cache_dir, search_str + '*'))
+    logging.debug('Found %d cached entries for %s...\n Entries: %s' % (len(cached_queries), search_str, cached_queries))
+    last_timestamp = 0
+    newest_cache_entry = cached_queries[0]
+    for res in cached_queries:
+        name, ext = os.path.splitext(os.path.basename(res))
+        sub, search, num, timestamp = name.split('_')
+        if int(timestamp) > last_timestamp:
+            newest_cache_entry = res
+            last_timestamp = int(timestamp)
+
+    post_df = pd.read_csv(newest_cache_entry, sep='\t', index_col=0)
+    logging.debug('Loaded %s as post df with %d entries' % (search_str, len(post_df)))
+    return post_df, newest_cache_entry
+

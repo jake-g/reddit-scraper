@@ -1,4 +1,9 @@
-secret*
 .idea/
+downloads/
+.ipynb_checkpoints/
 logs/
 __pycache__/
+
+secret*
+*.pyc
+*.DS_Store
