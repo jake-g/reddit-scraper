@@ -97,5 +97,4 @@ if __name__ == "__main__":
     if args.num_posts > 1000:
         logging.warning('num_posts too large (%d), Reddit only makes a max of 1000 posts available' % args.num_posts)
     logging.info('Processing %d subreddits' % len(args.subs))
-    output_files = [download_all_top_for_sub(sub, args) for sub in args.subs]
-    pprint(output_files)
+    [download_all_top_for_sub(sub, args) for sub in args.subs]

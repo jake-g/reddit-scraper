@@ -28,6 +28,19 @@ VERBOSITY = 0
 DEFAULT_PATH = './downloads/'
 
 
+class logger(object):
+    def debug(self, msg):
+        if VERBOSITY > 0:
+            print(msg)
+        pass
+
+    def warning(self, msg):
+        print(msg)
+
+    def error(self, msg):
+        print(msg)
+
+
 def download_playlist(playlist, opts):
     # must be txt file with link per line
     print('Downloading List...\n')
@@ -43,24 +56,12 @@ def download_playlist(playlist, opts):
                 pass
 
 
-def download_track(url, opts):
-    class logger(object):
-        def debug(self, msg):
-            if VERBOSITY > 0:
-                print(msg)
-            pass
-
-        def warning(self, msg):
-            print(msg)
-
-        def error(self, msg):
-            print(msg)
-
+def download_track(url, opts, logger=logger()):
     def callback(d):
         if d['status'] == 'finished':
             print('\x1b[1A[\033[92mSaving\033[00m] %s' % (d[u'filename']), end='')
 
-    opts[u'logger'] = logger()
+    opts[u'logger'] = logger
     opts[u'progress_hooks'] = [callback]
     print('[\033[91mFetching\033[00m] %s' % url)
     if 'soundcloud.com' in url:

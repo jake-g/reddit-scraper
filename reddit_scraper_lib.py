@@ -315,9 +315,19 @@ def title_similarity_score(str1, str2):
 
 
 def download_url(url, opts):
+    class logger(object):
+        def debug(self, msg):
+            logging.debug(msg)
+            pass
+
+        def warning(self, msg):
+            logging.warning(msg)
+
+        def error(self, msg):
+            logging.error(msg)
     try:
         if valid_url(url):
-            download_track(str(url), opts)
+            download_track(str(url), opts, logger=logger())
         else:
             logging.warning('Skipping invalid url: %s' % url)
     except Exception as e:
