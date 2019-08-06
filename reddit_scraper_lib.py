@@ -325,6 +325,7 @@ def download_url(url, opts):
 
         def error(self, msg):
             logging.error(msg)
+
     try:
         if valid_url(url):
             download_track(str(url), opts, logger=logger())
@@ -332,6 +333,7 @@ def download_url(url, opts):
             logging.warning('Skipping invalid url: %s' % url)
     except Exception as e:
         logging.error('Failed to download url: %s...\n%s' % (url, e))
+
 
 def check_cache(search_str, cache_dir):
     logging.debug('Looking in cache (%s) for %s...' % (cache_dir, search_str))
@@ -349,4 +351,3 @@ def check_cache(search_str, cache_dir):
     post_df = pd.read_csv(newest_cache_entry, sep='\t', index_col=0)
     logging.debug('Loaded %s as post df with %d entries' % (search_str, len(post_df)))
     return post_df, newest_cache_entry
-

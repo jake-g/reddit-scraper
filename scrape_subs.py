@@ -2,7 +2,6 @@ import argparse
 import logging
 import os
 import time
-from pprint import pprint
 
 from reddit_scraper_lib import RedditFetcher, check_cache, download_url
 from secret import SECRET, CLIENT, APPNAME
