@@ -6,7 +6,7 @@ from urllib.parse import urlparse, parse_qs
 import pandas as pd
 import praw
 
-from audioscrape import download_track, valid_url
+from audio_scrape import download_track, valid_url
 
 
 class Playlist(object):

@@ -59,11 +59,11 @@ def download_playlist(playlist, opts):
 def download_track(url, opts, logger=logger()):
     def callback(d):
         if d['status'] == 'finished':
-            print('\x1b[1A[\033[92mSaving\033[00m] %s' % (d[u'filename']), end='')
+            print('\x1b[1A[\033[92mSaving\033[00m] %s\n' % (d[u'filename']), end='')
 
     opts[u'logger'] = logger
     opts[u'progress_hooks'] = [callback]
-    print('[\033[91mFetching\033[00m] %s' % url)
+    print('[\033[91mFetching\033[00m] %s\n' % url)
     if 'soundcloud.com' in url:
         opts[u'postprocessors'][0][u'titleformat'] = "%(uploader)s - %(title)s"
     with youtube_dl.YoutubeDL(opts) as ydl:
