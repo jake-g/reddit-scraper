@@ -32,7 +32,11 @@ dl_opts = {  # Settings for youtube-dl
 def download_all_top_for_sub(sub, args):
     search_str = '%s_%s-%s_%d' % (sub, args.sort, args.time_range, args.num_posts)
     if args.use_cache:  # Load previous query.
-        post_df, output_f = check_cache(search_str, args.cache_dir)
+        cached_data = check_cache(search_str, args.cache_dir)
+    else:
+        cached_data = None
+    if cached_data:
+        post_df, output_f = cached_data
     else:  # Query reddit for all top posts in sub.
         logging.debug('Searching %s...' % search_str)
         res = reddit.search(sub, sort_order=args.sort, time_filter=args.time_range,
