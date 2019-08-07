@@ -19,7 +19,7 @@ dl_opts = {  # Settings for youtube-dl
         {
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
-            'preferredquality': '0'
+            'preferredquality': '192'
         },
         {
             'key': 'EmbedThumbnail',
