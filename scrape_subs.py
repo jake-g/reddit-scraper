@@ -3,7 +3,7 @@ import logging
 import os
 import time
 
-from reddit_scraper_lib import RedditFetcher, check_cache, download_url
+from reddit_scraper_lib import RedditFetcher, check_cache, download_url, log_files_in_folder
 from secret import SECRET, CLIENT, APPNAME
 
 dl_opts = {  # Settings for youtube-dl
@@ -29,7 +29,7 @@ dl_opts = {  # Settings for youtube-dl
 }
 
 
-def download_all_top_for_sub(sub, args):
+def scrape_sub(sub, args):
     search_str = '%s_%s-%s_%d' % (sub, args.sort, args.time_range, args.num_posts)
     if args.use_cache:  # Load previous query.
         cached_data = check_cache(search_str, args.cache_dir)
@@ -57,6 +57,10 @@ def download_all_top_for_sub(sub, args):
         for i, url in enumerate(post_df['url']):
             logging.info('(%d/%d)' % (i + 1, len(post_df)))
             download_url(url, dl_opts)
+
+        if args.log_filenames:
+            log_f = os.path.join(args.cache_dir, '%s_files.csv' % search_str)
+            log_files_in_folder(log_f, download_folder)
 
 
 if __name__ == "__main__":
@@ -86,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--debug", "-d", action="store_true", help="Print debug info")
     parser.add_argument("--use_cache", action="store_true", help="Load Reddit results from cached_file.")
     parser.add_argument("--download_posts", action="store_true", help="Downloads the media file.")
+    parser.add_argument("--log_filenames", action="store_true", help="Saves a log of the filenames.")
     args = parser.parse_args()
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -100,4 +105,4 @@ if __name__ == "__main__":
     if args.num_posts > 1000:
         logging.warning('num_posts too large (%d), Reddit only makes a max of 1000 posts available' % args.num_posts)
     logging.info('Processing %d subreddits' % len(args.subs))
-    [download_all_top_for_sub(sub, args) for sub in args.subs]
+    [scrape_sub(sub, args) for sub in args.subs]

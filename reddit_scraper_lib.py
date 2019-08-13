@@ -337,7 +337,7 @@ def download_url(url, opts):
 
 def check_cache(search_str, cache_dir):
     logging.debug('Looking in cache (%s) for %s...' % (cache_dir, search_str))
-    cached_queries = glob.glob(os.path.join(cache_dir, search_str + '*'))
+    cached_queries = glob.glob(os.path.join(cache_dir, search_str + '*.tsv'))
     logging.debug('Found %d cached entries for %s...\n Entries: %s' % (len(cached_queries), search_str, cached_queries))
     last_timestamp = 0
     if len(cached_queries) == 0:
@@ -355,3 +355,11 @@ def check_cache(search_str, cache_dir):
         post_df = pd.read_csv(newest_cache_entry, sep='\t', index_col=0)
         logging.debug('Loaded %s as post df with %d entries' % (search_str, len(post_df)))
         return post_df, newest_cache_entry
+
+
+def log_files_in_folder(output_log, media_folder, ext='.mp3'):
+    media_files = [f for f in os.listdir(media_folder) if f.endswith(ext)]
+    logging.info('Logging downloded files from %s to: %s' % (media_folder, output_log))
+    with open(output_log, 'w', encoding="utf-8") as f:
+        for file in media_files:
+            f.write(file.replace(ext, '') + '\n')
