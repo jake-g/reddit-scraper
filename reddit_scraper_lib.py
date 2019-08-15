@@ -358,8 +358,17 @@ def check_cache(search_str, cache_dir):
 
 
 def log_files_in_folder(output_log, media_folder, ext='.mp3'):
+    remove_str = ['Official Video', 'Official Music Video', 'Officiell Musikvideo',
+                  'Music Video', 'Clean', 'Fully Uncensored Video',
+                  'HD', 'HQ', '720', '1080']
     media_files = [f for f in os.listdir(media_folder) if f.endswith(ext)]
     logging.info('Logging downloded files from %s to: %s' % (media_folder, output_log))
+    media_files_cleaned = []
+    for file in media_files:
+        for s in remove_str:
+            file = file.lower().replace(s.lower(), '')
+        file_clean = file.replace(ext, '').replace('()', '').strip()
+        media_files_cleaned.append(file_clean)
     with open(output_log, 'w', encoding="utf-8") as f:
-        for file in media_files:
-            f.write(file.replace(ext, '') + '\n')
+        for file in sorted(frozenset(media_files_cleaned)):
+            f.write(file.title() + '\n')

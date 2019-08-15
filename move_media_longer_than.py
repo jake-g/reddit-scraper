@@ -10,12 +10,12 @@ DEBUG = True
 max_track_length = 15 * 60
 rootdir = 'D:/Reddit_Music_Scrape/'
 
-unknown_dir = os.path.join(rootdir, '_unknown/')
-album_dir = os.path.join(rootdir, '_albums/')
+unknown_dir = os.path.join(rootdir, '_Track_Collections/unknown/')
+album_dir = os.path.join(rootdir, '_Track_Collections/albums/')
 album_strings = ['full album', 'ep', 'mixtape', 'album', 'full tape']
-mix_dir = os.path.join(rootdir, '_mixes_performances/')
+mix_dir = os.path.join(rootdir, '_Track_Collections/mixes_performances/')
 mix_strings = ['boiler room', 'compilation', 'mix', 'concert', 'live', 'dj set', 'tiny desk', 'fabriclive']
-spam_dir = os.path.join(rootdir, '_spam/')
+spam_dir = os.path.join(rootdir, '_Track_Collections/spam/')
 spam_strs = ['eating spicy wings', 'twitch']
 
 
