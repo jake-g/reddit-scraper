@@ -3,6 +3,7 @@ downloads/
 .ipynb_checkpoints/
 logs/
 __pycache__/
+old/
 
 secret*
 *.pyc
