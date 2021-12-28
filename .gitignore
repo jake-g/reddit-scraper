@@ -2,9 +2,10 @@
 downloads/
 .ipynb_checkpoints/
 logs/20*
+added_to_db/
 __pycache__/
 old/
-
+db/
 secret*
 *.pyc
 *.DS_Store
