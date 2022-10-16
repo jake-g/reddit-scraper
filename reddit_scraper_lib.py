@@ -40,7 +40,7 @@ class Playlist(object):
         Returns:
           Result json from firebase.
         """
-        # TODO attach db to self
+        # TODO include db in self?
         # Add playlist entry
         db.collection(collection).document(self.name).set({
             'url': self.url,
@@ -101,7 +101,7 @@ class Post(object):
         self.title = None
         self.url = None
         self.author = None
-        self.timestamp = None  # TODO make sure it is in UTC unix
+        self.timestamp = None
         self.description = None
         self.likes = 0
         self.dislikes = 0
@@ -221,7 +221,7 @@ class RedditPost(Post):
 
         """
         self.url = submission.url
-        self.timestamp = submission.created_utc  # TODO standardize timestamp
+        self.timestamp = submission.created_utc  # TODO standardize timestamp, make sure it is in UTC unix
         self.num_comments = submission.num_comments
         self.likes = submission.ups
         self.dislikes = submission.downs
@@ -244,7 +244,6 @@ class RedditPost(Post):
             if self.reddit['source'] == 'youtube.com':
                 self.youtube_id = get_yt_video_id(submission.url)
 
-        # TODO set the following:
         self.num_views = None  # TODO set this from soundcloud or youtube somehow
 
 
@@ -293,7 +292,6 @@ def title_similarity_score(str1, str2):
       title_similarity_score('Jake garrison - ok (remix)', 'jake garrison - ok') --> 0 # trump
 
     """
-    # TODO unit test
 
     remove = ['(', ')', '-', '|', ':', ';', '[', ']', '<', '>', 'fresh', 'official', 'video', 'music', 'by', 'lyrics']
     trump_set = set(['remix', 'edit', 'live', 'cover', 'mashup', 'mix'])
