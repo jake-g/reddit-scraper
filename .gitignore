@@ -1,7 +1,7 @@
 .idea/
 downloads/
 .ipynb_checkpoints/
-logs/20*
+logs/*
 added_to_db/
 __pycache__/
 old/
