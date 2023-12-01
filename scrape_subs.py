@@ -30,7 +30,7 @@ dl_opts = {  # Settings for youtube-dl
 
 
 def scrape_sub(sub, args):
-    search_str = '%s_%s-%s_%d' % (sub, args.sort, args.time_range, args.num_posts)
+    search_str = '%s_%s-%s_%d' % (sub.replace('_', '-'), args.sort, args.time_range, args.num_posts)
     if args.use_cache:  # Load previous query.
         cached_data = check_cache(search_str, args.cache_dir)
     else:
