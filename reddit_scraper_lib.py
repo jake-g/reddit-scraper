@@ -194,7 +194,7 @@ class RedditFetcher(Fetcher):
             post_list = [RedditPost(p) for p in _subs.controversial(time_filter=time_filter, limit=limit)]
         else:
             raise ValueError('Sort_order must be: hot, new, rising, random, top or controversial')
-        if content_type is 'media':
+        if content_type == 'media':
             post_list = [p for p in post_list if p.is_media]
 
         if name is None:
