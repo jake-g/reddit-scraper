@@ -22,6 +22,9 @@ Set-Location "D:\Projects\_Projects_Synced\music-library\reddit-scraper"
 # 1. EXCLUSION LIST
 # ==========================================
 # Communities explicitly banned from the library (Too specific/broad/irrelevant/broken)
+
+
+# Communities explicitly banned from the library (Too specific/broad/irrelevant/broken)
 $Banned = @(
     # Artists (Too Specific/Pop Fandoms)
     "CarlyRaeJepsen", "CharliXCX", "LanaDelRey", "FrankOcean", "TheWeeknd", 
@@ -33,7 +36,18 @@ $Banned = @(
     "tipofmytongue", "NameThatSong", "MakeMeAPlaylist", "ThisIsOurMusic",
 
     # Broken / Private / Does Not Exist (Added Dec 2025)
-    "glitch", "highlife", "thespicecabinet", "FreshMusic"
+    "glitch", "highlife", "thespicecabinet", "FreshMusic",
+
+    # 2025 Cleanup: Text-Only / Discussion / No Media Links
+    # These consistently return 0 downloads because they are for talking, not listening.
+    "WeAreTheMusicMakers", "Composer", "MusicProduction", "HipHop101", 
+    "KpopHelp"
+
+    # 2025 Cleanup: Inactive / Dead / Ultra-Low Yield
+    # These returned 0 new entries in the yearly top charts.
+    "BollywoodMusic", "Swing", "Hardcore", "Hardstyle", "Brostep", 
+    "NuMetal", "VikingMetal", "MidwestEmo", 
+    "RiotGrrrl", "PowerPopGirls", "IndianHipHopHeads",
 )
 
 # ==========================================
@@ -64,7 +78,7 @@ $Cluster_HouseTechno = @(
 # D. ELECTRONIC: BASS, DUB & TRAP (Broken Beats)
 $Cluster_Bass = @(
     "DnB", "AtmosphericDnB", "jungle", "breakcore", "Breakbeat", "BigBeat",
-    "Dubstep", "realdubstep", "Brostep", "SpaceBass", "trapmuzik", "Trap",
+    "Dubstep", "realdubstep", "SpaceBass", "trapmuzik", "Trap",
     "bassheavy", "Grime", "UKGarage", "UKDrill", "GlitchHop",
     "dub", "reggae" # Often adjacent to bass culture
 )
@@ -96,33 +110,33 @@ $Cluster_Heavy = @(
     "Metal", "HeavyMetal", "DoomMetal", "BlackMetal", "DeathMetal", 
     "ThrashMetal", "SpeedMetal", "PowerMetal", "Sludge", "PostMetal",
     "metalcore", "deathcore", "MathCore", "Grindcore", "Djent", "ProgMetal", 
-    "symphonicmetal", "folkmetal", "VikingMetal", "IndustrialMetal", "NuMetal",
-    "Punk_Rock", "90sPunk", "hardcore", "PostHardcore", "Emo", "Screamo", 
-    "MidwestEmo", "Ska", "SkaPunk", "FolkPunk", "CelticPunk", "RiotGrrrl"
+    "symphonicmetal", "folkmetal", "IndustrialMetal",
+    "Punk_Rock", "90sPunk", "PostHardcore", "Emo", "Screamo", 
+    "Ska", "SkaPunk", "FolkPunk", "CelticPunk"
 )
 
 # I. HIPHOP & URBAN (Beats & Rhymes)
 $Cluster_HipHop = @(
-    "hiphopheads", "hiphop", "rap", "80sHipHop", "90shiphop", "hiphop101",
-    "hiphopheadsnorthwest", "IndianHipHopHeads", "GermanRap", "FrenchRap",
+    "hiphopheads", "hiphop", "rap", "80sHipHop", "90shiphop",
+    "hiphopheadsnorthwest", "GermanRap", "FrenchRap",
     "Gfunk", "jazzyhiphop", "Instrumentals", "AfroBeat", "Dancehall", "Reggaeton"
 )
 
 # J. POP & MAINSTREAM (Fandoms)
 $Cluster_Pop = @(
-    "popheads", "pcmusic", "powerpopgirls", "boybands",
-    "kpop", "kpophelp", "jpop", "cpop", "latinpopheads", "ArtPop",
-    "BollywoodMusic", "Soca", "nudisco", "disco"
+    "popheads", "pcmusic", "boybands",
+    "kpop", "jpop", "cpop", "latinpopheads", "ArtPop",
+    "Soca", "nudisco", "disco"
 )
 
 # K. JAZZ, CLASSICAL & ROOTS (Organic)
 $Cluster_Organic = @(
     "jazz", "ModernJazz", "FreeJazz", "JazzFusion", "jazznoir", "GypsyJazz", 
-    "DarkJazz", "NuJazz", "Swing", "BigBand",
+    "DarkJazz", "NuJazz", "BigBand",
     "blues", "bluesrock", "folk", "IndieFolk", "bluegrass", "RootsMusic", 
     "altcountry", "OutlawCountry", "Americana",
     "ClassicalMusic", "ElitistClassical", "baroque", "contemporary", "EarlyMusic", 
-    "Opera", "ChoralMusic", "Composer", "icm"
+    "Opera", "ChoralMusic", "icm"
 )
 
 # L. REGIONAL & WORLD (Global Sounds)
@@ -137,7 +151,7 @@ $Cluster_Functional = @(
     "MusicForConcentration", "codingmusic", "Liftingmusic", "runningmusic",
     "nightdrive", "rainymood", "gamemusic", "VGMvinyl", "Cyberpunk_Music", 
     "Frisson", "GuiltyPleasureMusic", "BinauralMusic", "animemusic",
-    "WeAreTheMusicMakers", "musicproduction", "BedroomBands"
+    "BedroomBands"
 )
 
 # ==========================================
