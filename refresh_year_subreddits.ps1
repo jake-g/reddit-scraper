@@ -4,13 +4,8 @@
     
     DESCRIPTION:
     This is the maintenance script to run once per year (e.g., Jan 1st).
-    It aggregates ALL target subreddits (Original List + 2025 Deep Research Expansion),
-    filters out banned communities, and scrapes the "Top of the Year".
-    
-    TARGETS:
-    - 100+ Subreddits across 12 distinct clusters.
-    - Time Range: YEAR
-    - Sort: TOP
+    It aggregates ALL target subreddits, filters out banned communities,
+    and scrapes the "Top of the Year".
 #>
 
 # Set Window Title
@@ -19,149 +14,109 @@ Write-Host "Starting Reddit Scraper (Yearly Update)..." -ForegroundColor Cyan
 Set-Location "D:\Projects\_Projects_Synced\music-library\reddit-scraper"
 
 # ==========================================
-# 1. EXCLUSION LIST
+# 1. EXCLUSION LIST (BANNED SUBREDDITS)
 # ==========================================
-# Communities explicitly banned from the library (Too specific/broad/irrelevant/broken)
-
-
-# Communities explicitly banned from the library (Too specific/broad/irrelevant/broken)
+# Communities banned for being off-topic, discussion-focused, or consistently inactive.
 $Banned = @(
     # Artists (Too Specific/Pop Fandoms)
-    "CarlyRaeJepsen", "CharliXCX", "LanaDelRey", "FrankOcean", "TheWeeknd", 
-    "TaylorSwift", "Bangtan", "BlackPink", "Drake", "Kanye",
+    "Bangtan", "BlackPink", "CarlyRaeJepsen", "CharliXCX", "Drake", 
+    "FrankOcean", "Kanye", "LanaDelRey", "TaylorSwift", "TheWeeknd",
     
     # Q&A / Requests / Too Broad (Not link aggregators)
-    "musicsuggestions", "MusicRecommendations", "ifyoulikeblank", "WhereDoIStart",
-    "IdentifyThisTrack", "listentothis", "ListenToUs", "LetsTalkMusic", 
-    "tipofmytongue", "NameThatSong", "MakeMeAPlaylist", "ThisIsOurMusic",
+    "IdentifyThisTrack", "ifyoulikeblank", "LetsTalkMusic", "ListenToUs", 
+    "listentothis", "MakeMeAPlaylist", "MusicRecommendations", "musicsuggestions", 
+    "NameThatSong", "ThisIsOurMusic", "tipofmytongue", "WhereDoIStart",
 
-    # Broken / Private / Does Not Exist (Added Dec 2025)
-    "glitch", "highlife", "thespicecabinet", "FreshMusic",
+    # Broken / Private / Does Not Exist
+    "FreshMusic", "glitch", "highlife", "thespicecabinet",
 
-    # 2025 Cleanup: Text-Only / Discussion / No Media Links
-    # These consistently return 0 downloads because they are for talking, not listening.
-    "WeAreTheMusicMakers", "Composer", "MusicProduction", "HipHop101", 
-    "KpopHelp"
+    # Discussion-Focused / Text-Only (Creator feedback, not general discovery)
+    "BedroomBands", "Composer", "HipHop101", "IndieMusicFeedback", "KpopHelp", 
+    "MusicProduction", "WeAreTheMusicMakers",
 
-    # 2025 Cleanup: Inactive / Dead / Ultra-Low Yield
-    # These returned 0 new entries in the yearly top charts.
-    "BollywoodMusic", "Swing", "Hardcore", "Hardstyle", "Brostep", 
-    "NuMetal", "VikingMetal", "MidwestEmo", 
-    "RiotGrrrl", "PowerPopGirls", "IndianHipHopHeads",
+    # CONFIRMED Inactive / Dead / Low-Yield (Cleanup Dec 2025)
+    "BollywoodMusic", "Breakcore", "CityPop", "ClassicalMusic", "Emo", "FolkPunk", 
+    "Gabber", "Grunge", "Hardcore", "Hardstyle", "IndianHipHopHeads", "MidwestEmo", 
+    "NuMetal", "Opera", "Outrun", "pcmusic", "PowerPopGirls", "Reggaeton", 
+    "RiotGrrrl", "Swing", "UKDrill", "VGMvinyl"
 )
 
 # ==========================================
 # 2. CLUSTERS
 # ==========================================
 
-# A. MODERN ERA & DISCOVERY (2010s-2020s & Hidden Gems)
-$Cluster_ModernDiscovery = @(
-    "2010smusic", "2020sMusic", "NewMusic", "IndieMusicFeedback", 
-    "BedroomPop", "HyperPop", "lostwave", "UndergroundMusic", "UnheardOf",
-    "deepcuts", "treemusic", "HeadNodders", "MelancholyMusic", "Elephant6",
-    "Samplehunters", "vintageobscura", "TheOverload" 
+# A. ROCK, METAL & PUNK (Guitar-driven, from Classic to Extreme)
+$Cluster_Rock_And_Metal = @(
+    "90sAlternative", "90sPunk", "90sRock", "AlternativeRock", "BlackMetal", "BritPop",
+    "CelticPunk", "ClassicRock", "dancepunk", "DeathMetal", "deathcore", "Djent",
+    "DoomMetal", "DreamPop", "FolkMetal", "GarageRock", "Grindcore", "IndustrialMetal",
+    "krautrock", "MathCore", "MathRock", "Metal", "metalcore", "ModernRockMusic",
+    "monsterfuzz", "neopsychedelia", "NewWave", "NoWave", "NoiseRock", "PostHardcore",
+    "PostMetal", "PostPunk", "PostRock", "PowerMetal", "ProgMetal", "PsychedelicRock",
+    "Punk_Rock", "Rock", "Screamo", "shoegaze", "Ska", "SkaPunk", "Sludge", "Slowcore",
+    "SpeedMetal", "stonerrock", "SurfPunk", "SurfRock", "symphonicmetal", "synthrock",
+    "ThrashMetal", "VikingMetal"
 )
 
-# B. DECADES & VINTAGE (Pre-2010s)
-$Cluster_Decades = @(
-    "2000smusic", "90sMusic", "80sMusic", "70sMusic", "60sMusic", "50sMusic",
-    "70s", "OldiesMusic", "SoundsVintage", "Exotica"
+# B. ELECTRONIC (All forms of synth, beat, and sample-based music)
+$Cluster_Electronic = @(
+    "acidhouse", "Aggrotech", "ambientmusic", "AtmosphericDnB", "bassheavy", "BigBeat",
+    "Breakbeat", "Brostep", "burial", "chillwave", "Coldwave", "Darkwave", "deephouse",
+    "DnB", "downtempo", "dub", "Dubstep", "DubTechno", "EBM", "ElectronicMusic",
+    "frenchhouse", "funkhouse", "futurebass", "futurebeats", "futuregarage",
+    "futuresynth", "GlitchHop", "Grime", "house", "IDM", "industrialmusic", "jungle",
+    "lofihiphop", "melodichouse", "minimal", "newretrowave", "OldElectronicMusic",
+    "OldskoolRave", "psybient", "realdubstep", "SpaceBass", "synthwave", "tech_house",
+    "Techno", "Trap", "trapmuzik", "TripHop", "triphop", "UKGarage", "vaporwave"
 )
 
-# C. ELECTRONIC: HOUSE & TECHNO (4/4 Rhythms)
-$Cluster_HouseTechno = @(
-    "house", "minimal", "deephouse", "tech_house", "melodichouse", "frenchhouse", 
-    "funkhouse", "acidhouse", "Techno", "DubTechno", "OldskoolRave", "ElectronicMusic",
-    "OldElectronicMusic", "industrialmusic", "Aggrotech", "EBM"
+# C. HIP-HOP & RHYTHM (Rap, R&B, Funk, and adjacent genres)
+$Cluster_HipHop_And_Rhythm = @(
+    "80sHipHop", "90shiphop", "AfroBeat", "Dancehall", "FrenchRap", "GermanRap",
+    "Gfunk", "hiphop", "hiphopheadsnorthwest", "hiphopheads", "Instrumentals",
+    "jazzyhiphop", "rap"
 )
 
-# D. ELECTRONIC: BASS, DUB & TRAP (Broken Beats)
-$Cluster_Bass = @(
-    "DnB", "AtmosphericDnB", "jungle", "breakcore", "Breakbeat", "BigBeat",
-    "Dubstep", "realdubstep", "SpaceBass", "trapmuzik", "Trap",
-    "bassheavy", "Grime", "UKGarage", "UKDrill", "GlitchHop",
-    "dub", "reggae" # Often adjacent to bass culture
+# D. POP & INDIE (Mainstream, Alternative Pop, and general discovery hubs)
+$Cluster_Pop_And_Indie = @(
+    "2010smusic", "2020sMusic", "ArtPop", "BedroomPop", "boybands", "cpop",
+    "disco", "HyperPop", "indie", "indieheads","indierock",
+    "jpop", "kpop", "LatinPopHeads", "NewMusic", "nudisco", "popheads", "Soca"
 )
 
-# E. ELECTRONIC: SYNTH & CHILL (Vibe-focused)
-$Cluster_SynthChill = @(
-    "IDM", "ambientmusic", "MusicToSleepTo", "chillmusic", "chillwave", 
-    "psybient", "downtempo", "TripHop", "triphop", "lofihiphop", "burial",
-    "futuresynth", "futurebeats", "futurebass", "futuregarage", 
-    "vaporwave", "outrun", "newretrowave", "synthwave", "Darkwave", "Coldwave"
+# E. JAZZ, FOLK & ROOTS (Acoustic, Organic, and traditional sounds)
+$Cluster_Jazz_Folk_And_Roots = @(
+    "altcountry", "Americana", "baroque", "BigBand", "bluegrass", "blues", "bluesrock",
+    "ChoralMusic", "contemporary", "DarkJazz", "EarlyMusic", "ElitistClassical",
+    "Exotica", "folk", "FreeJazz", "GypsyJazz", "icm", "IndieFolk", "jazz",
+    "JazzFusion", "jazznoir", "ModernJazz", "NuJazz", "OldiesMusic", "OutlawCountry",
+    "RootsMusic"
 )
 
-# F. ROCK: INDIE & ALTERNATIVE (General)
-$Cluster_IndieRock = @(
-    "indieheads", "indie", "indierock", "Rock", "ClassicRock", "ModernRockMusic",
-    "90sAlternative", "90sRock", "AlternativeRock", "PostPunk", "GarageRock", 
-    "BritPop", "Slowcore", "dancepunk", "NewWave", "NoWave"
+# F. BY ERA & REGION (Music defined by time or place)
+$Cluster_By_Era_And_Region = @(
+    "2000smusic", "50sMusic", "60sMusic", "70s", "70sMusic", "80sMusic", "90sMusic",
+    "AfricanMusic", "AfroPop", "bossanova", "brazilianmusic", "DesertBlues",
+    "Flamenco", "IndianIndie", "ItalianMusic", "japanesemusic", "kindie", "koreanrock",
+    "SoundsVintage", "vintageobscura", "WorldMusic"
 )
 
-# G. ROCK: NICHE, PSYCH & SHOEGAZE (Textures)
-$Cluster_PsychShoegaze = @(
-    "shoegaze", "DreamPop", "PostRock", "MathRock", "krautrock", "synthrock",
-    "PsychedelicRock", "neopsychedelia", "stonerrock", "SpaceMusic",
-    "monsterfuzz", "NoiseRock", "SurfPunk", "SurfRock"
-)
-
-# H. METAL & PUNK (Heavy)
-$Cluster_Heavy = @(
-    "Metal", "HeavyMetal", "DoomMetal", "BlackMetal", "DeathMetal", 
-    "ThrashMetal", "SpeedMetal", "PowerMetal", "Sludge", "PostMetal",
-    "metalcore", "deathcore", "MathCore", "Grindcore", "Djent", "ProgMetal", 
-    "symphonicmetal", "folkmetal", "IndustrialMetal",
-    "Punk_Rock", "90sPunk", "PostHardcore", "Emo", "Screamo", 
-    "Ska", "SkaPunk", "FolkPunk", "CelticPunk"
-)
-
-# I. HIPHOP & URBAN (Beats & Rhymes)
-$Cluster_HipHop = @(
-    "hiphopheads", "hiphop", "rap", "80sHipHop", "90shiphop",
-    "hiphopheadsnorthwest", "GermanRap", "FrenchRap",
-    "Gfunk", "jazzyhiphop", "Instrumentals", "AfroBeat", "Dancehall", "Reggaeton"
-)
-
-# J. POP & MAINSTREAM (Fandoms)
-$Cluster_Pop = @(
-    "popheads", "pcmusic", "boybands",
-    "kpop", "jpop", "cpop", "latinpopheads", "ArtPop",
-    "Soca", "nudisco", "disco"
-)
-
-# K. JAZZ, CLASSICAL & ROOTS (Organic)
-$Cluster_Organic = @(
-    "jazz", "ModernJazz", "FreeJazz", "JazzFusion", "jazznoir", "GypsyJazz", 
-    "DarkJazz", "NuJazz", "BigBand",
-    "blues", "bluesrock", "folk", "IndieFolk", "bluegrass", "RootsMusic", 
-    "altcountry", "OutlawCountry", "Americana",
-    "ClassicalMusic", "ElitistClassical", "baroque", "contemporary", "EarlyMusic", 
-    "Opera", "ChoralMusic", "icm"
-)
-
-# L. REGIONAL & WORLD (Global Sounds)
-$Cluster_Global = @(
-    "WorldMusic", "AfricanMusic", "AfroPop", "DesertBlues", 
-    "brazilianmusic", "bossanova", "Flamenco", "ItalianMusic", 
-    "japanesemusic", "citypop", "koreanrock", "kindie", "IndianIndie"
-)
-
-# M. FUNCTIONAL & CREATOR (Tools & Moods)
-$Cluster_Functional = @(
-    "MusicForConcentration", "codingmusic", "Liftingmusic", "runningmusic",
-    "nightdrive", "rainymood", "gamemusic", "VGMvinyl", "Cyberpunk_Music", 
-    "Frisson", "GuiltyPleasureMusic", "BinauralMusic", "animemusic",
-    "BedroomBands"
+# G. BY MOOD & FUNCTION (Music for a specific purpose, feeling, or context)
+$Cluster_By_Mood_And_Function = @(
+    "animemusic", "BinauralMusic", "chillmusic", "codingmusic",
+    "Cyberpunk_Music", "deepcuts", "Elephant6", "Frisson", "gamemusic",
+    "GuiltyPleasureMusic", "HeadNodders", "Liftingmusic", "lostwave", "MelancholyMusic",
+    "MusicForConcentration", "MusicToSleepTo", "nightdrive", "rainymood", "Samplehunters",
+    "SpaceMusic", "TheOverload", "treemusic", "UnheardOf", "UndergroundMusic"
 )
 
 # ==========================================
 # 3. AGGREGATION & CLEANING
 # ==========================================
 
-$AllCandidates = $Cluster_ModernDiscovery + $Cluster_Decades + $Cluster_HouseTechno + `
-                 $Cluster_Bass + $Cluster_SynthChill + $Cluster_IndieRock + `
-                 $Cluster_PsychShoegaze + $Cluster_Heavy + $Cluster_HipHop + `
-                 $Cluster_Pop + $Cluster_Organic + $Cluster_Global + $Cluster_Functional
+$AllCandidates = $Cluster_Rock_And_Metal + $Cluster_Electronic + $Cluster_HipHop_And_Rhythm + `
+                 $Cluster_Pop_And_Indie + $Cluster_Jazz_Folk_And_Roots + `
+                 $Cluster_By_Era_And_Region + $Cluster_By_Mood_And_Function
 
 # 1. Sort and Unique (Removes any accidental duplicates between clusters)
 $UniqueCandidates = $AllCandidates | Select-Object -Unique | Sort-Object

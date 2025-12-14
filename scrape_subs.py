@@ -7,6 +7,9 @@ import glob
 from reddit_scraper_lib import RedditFetcher, check_cache, download_url, log_files_in_folder
 from secret import SECRET, CLIENT, APPNAME
 
+# Any subreddit yielding fewer posts than this will not have a .tsv file saved.
+MINIMUM_ENTRIES_TO_SAVE = 3
+
 dl_opts = {  # Settings for youtube-dl
     'format': 'bestaudio/best',
     'forcejson': True,
@@ -70,13 +73,20 @@ def scrape_sub(sub, args):
             post_df = res.to_df()
             logging.info('Reddit returned %d media posts from %s' % (len(post_df), sub))
             
-            if args.cache_dir:
-                # Ensure cache directory exists
+            # Check if the number of posts meets our minimum threshold before saving.
+            if len(post_df) < MINIMUM_ENTRIES_TO_SAVE:
+                logging.warning(
+                    f"Subreddit '{sub}' yielded only {len(post_df)} posts. "
+                    f"Skipping TSV file creation to avoid clutter (threshold is {MINIMUM_ENTRIES_TO_SAVE})."
+                )
+            elif args.cache_dir:
+                # This block only runs if we have enough entries AND a cache dir is specified.
                 if not os.path.exists(args.cache_dir):
                     os.makedirs(args.cache_dir)
                     
                 output_f = os.path.join(args.cache_dir, '%s_%d.tsv' % (search_str, time.time()))
-                logging.info('Saving %s to cache: %s' % (sub, output_f))
+                # Improved log message includes the count
+                logging.info(f'Saving {len(post_df)} posts from {sub} to cache: {output_f}')
                 post_df.to_csv(output_f, header=True, index=True, sep='\t')
                 
         except Exception as e:
