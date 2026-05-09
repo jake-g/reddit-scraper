@@ -1,11 +1,17 @@
 import argparse
+import glob
 import logging
 import os
 import time
-import glob
 
-from reddit_scraper_lib import RedditFetcher, check_cache, download_url, log_files_in_folder
-from secret import SECRET, CLIENT, APPNAME
+from secret import APPNAME
+from secret import CLIENT
+from secret import SECRET
+
+from reddit_scraper_lib import check_cache
+from reddit_scraper_lib import download_url
+from reddit_scraper_lib import log_files_in_folder
+from reddit_scraper_lib import RedditFetcher
 
 # Any subreddit yielding fewer posts than this will not have a .tsv file saved.
 MINIMUM_ENTRIES_TO_SAVE = 3
@@ -45,14 +51,14 @@ def scrape_sub(sub, args):
         # Pattern: logs/SubName_top-all_1000_*.tsv
         search_pattern = os.path.join(args.cache_dir, search_str + '*.tsv')
         existing_files = glob.glob(search_pattern)
-        
+
         if existing_files:
             logging.info(f"Skipping scrape for '{sub}': Found existing log {existing_files[0]}")
-            
+
             # If we are NOT downloading, we are done with this sub.
             if not args.download_posts:
                 return
-            
+
             # If we ARE downloading, we assume check_cache will load the existing file below.
             # But usually, if you just want to update the log index, you can return here.
 
@@ -63,7 +69,7 @@ def scrape_sub(sub, args):
 
     if cached_data:
         post_df, output_f = cached_data
-    else:  
+    else:
         # CRASH PROTECTION (Try/Except)
         try:
             logging.debug('Searching %s...' % search_str)
@@ -72,7 +78,7 @@ def scrape_sub(sub, args):
                                 limit=args.num_posts, content_type='media')
             post_df = res.to_df()
             logging.info('Reddit returned %d media posts from %s' % (len(post_df), sub))
-            
+
             # Check if the number of posts meets our minimum threshold before saving.
             if len(post_df) < MINIMUM_ENTRIES_TO_SAVE:
                 logging.warning(
@@ -83,12 +89,12 @@ def scrape_sub(sub, args):
                 # This block only runs if we have enough entries AND a cache dir is specified.
                 if not os.path.exists(args.cache_dir):
                     os.makedirs(args.cache_dir)
-                    
+
                 output_f = os.path.join(args.cache_dir, '%s_%d.tsv' % (search_str, time.time()))
                 # Improved log message includes the count
                 logging.info(f'Saving {len(post_df)} posts from {sub} to cache: {output_f}')
                 post_df.to_csv(output_f, header=True, index=True, sep='\t')
-                
+
         except Exception as e:
             # This catches the PRAW/Network error for missing sub
             logging.error(f"CRITICAL ERROR scraping subreddit '{sub}': {e}")
@@ -116,7 +122,7 @@ def scrape_sub(sub, args):
         if args.log_filenames:
             log_f = os.path.join(args.cache_dir, '%s_files.csv' % search_str)
             log_files_in_folder(log_f, download_folder)
-            
+
 if __name__ == "__main__":
     """
     python run_scraper.py \
@@ -127,7 +133,7 @@ if __name__ == "__main__":
         --debug \
         --use_cache \
         --download_posts
-    
+
     """
     parser = argparse.ArgumentParser(description="Scrape media from subreddits")
     parser.add_argument("--subs", type=str, help="Comma seperated list of subreddit names")
@@ -157,7 +163,7 @@ if __name__ == "__main__":
 
     # Split by comma, Strip whitespace, Convert to .lower() so filenames are always consistent
     args.subs = [s.strip().lower() for s in args.subs.split(',')]
-  
+
     if args.num_posts > 1000:
         logging.warning('num_posts too large (%d), Reddit only makes a max of 1000 posts available' % args.num_posts)
     logging.info('Processing %d subreddits' % len(args.subs))

@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
     Reddit Music Scraper - Yearly Update (All Subreddits)
-    
+
     DESCRIPTION:
     This is the maintenance script to run once per year (e.g., Jan 1st).
     It aggregates ALL target subreddits, filters out banned communities,
@@ -19,25 +19,25 @@ Set-Location "D:\Projects\_Projects_Synced\music-library\reddit-scraper"
 # Communities banned for being off-topic, discussion-focused, or consistently inactive.
 $Banned = @(
     # Artists (Too Specific/Pop Fandoms)
-    "Bangtan", "BlackPink", "CarlyRaeJepsen", "CharliXCX", "Drake", 
+    "Bangtan", "BlackPink", "CarlyRaeJepsen", "CharliXCX", "Drake",
     "FrankOcean", "Kanye", "LanaDelRey", "TaylorSwift", "TheWeeknd",
-    
+
     # Q&A / Requests / Too Broad (Not link aggregators)
-    "IdentifyThisTrack", "ifyoulikeblank", "LetsTalkMusic", "ListenToUs", 
-    "listentothis", "MakeMeAPlaylist", "MusicRecommendations", "musicsuggestions", 
+    "IdentifyThisTrack", "ifyoulikeblank", "LetsTalkMusic", "ListenToUs",
+    "listentothis", "MakeMeAPlaylist", "MusicRecommendations", "musicsuggestions",
     "NameThatSong", "ThisIsOurMusic", "tipofmytongue", "WhereDoIStart",
 
     # Broken / Private / Does Not Exist
     "FreshMusic", "glitch", "highlife", "thespicecabinet",
 
     # Discussion-Focused / Text-Only (Creator feedback, not general discovery)
-    "BedroomBands", "Composer", "HipHop101", "IndieMusicFeedback", "KpopHelp", 
+    "BedroomBands", "Composer", "HipHop101", "IndieMusicFeedback", "KpopHelp",
     "MusicProduction", "WeAreTheMusicMakers",
 
     # CONFIRMED Inactive / Dead / Low-Yield (Cleanup Dec 2025)
-    "BollywoodMusic", "Breakcore", "CityPop", "ClassicalMusic", "Emo", "FolkPunk", 
-    "Gabber", "Grunge", "Hardcore", "Hardstyle", "IndianHipHopHeads", "MidwestEmo", 
-    "NuMetal", "Opera", "Outrun", "pcmusic", "PowerPopGirls", "Reggaeton", 
+    "BollywoodMusic", "Breakcore", "CityPop", "ClassicalMusic", "Emo", "FolkPunk",
+    "Gabber", "Grunge", "Hardcore", "Hardstyle", "IndianHipHopHeads", "MidwestEmo",
+    "NuMetal", "Opera", "Outrun", "pcmusic", "PowerPopGirls", "Reggaeton",
     "RiotGrrrl", "Swing", "UKDrill", "VGMvinyl"
 )
 
@@ -122,7 +122,7 @@ $AllCandidates = $Cluster_Rock_And_Metal + $Cluster_Electronic + $Cluster_HipHop
 $UniqueCandidates = $AllCandidates | Select-Object -Unique | Sort-Object
 
 # 2. Remove BANNED items
-# Note: Case sensitivity doesn't matter much here if we used .lower() in python, 
+# Note: Case sensitivity doesn't matter much here if we used .lower() in python,
 # but -notcontains is case-insensitive in PowerShell anyway.
 $FinalTargetList = $UniqueCandidates | Where-Object { $Banned -notcontains $_ }
 
@@ -145,7 +145,7 @@ if ($FinalTargetList.Count -eq 0) {
     Write-Host "Error: Target list is empty." -ForegroundColor Red
 } else {
     Write-Host "Starting scrape..." -ForegroundColor Green
-    
+
     # Run the Python script
     # Note: --time_range=year is set for the yearly update
     python scrape_subs.py `

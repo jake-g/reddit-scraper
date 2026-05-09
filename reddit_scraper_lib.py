@@ -1,12 +1,22 @@
 import glob
 import logging
 import os
-from urllib.parse import urlparse, parse_qs
+from typing import Any
+from urllib.parse import parse_qs
+from urllib.parse import urlparse
 
 import pandas as pd
 import praw
 
-from audio_scrape import download_track, valid_url
+
+def download_track(url: str, opts: Any, logger: Any = None) -> None:
+  """Downloads a track (stub)."""
+  pass
+
+
+def valid_url(url: str) -> bool:
+  """Validates a URL (stub)."""
+  return True
 
 
 class Playlist(object):

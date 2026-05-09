@@ -1,7 +1,9 @@
 .idea/
 downloads/
 .ipynb_checkpoints/
-logs/*
+logs/
+legacy/
+notes.md
 added_to_db/
 __pycache__/
 old/
