@@ -11,3 +11,5 @@ db/
 secret*
 *.pyc
 *.DS_Store
+
+notebooks/

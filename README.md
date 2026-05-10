@@ -8,6 +8,7 @@ This module contains scripts to scrape Reddit for music links (YouTube, SoundClo
 * `reddit_scraper_lib.py`: Library functions for fetching data and string processing.
 * `reddit_scraper_tests.py`: Unit tests for library functions.
 * `refresh_year_subreddits.ps1`: PowerShell script to refresh year-specific subreddits.
+* `notebooks/`: Jupyter notebooks for data merging and ML experiments.
 
 ## Setup
 
@@ -27,7 +28,7 @@ python reddit_scraper_tests.py
 
 ## Highlight Changelog
 
-* **May 2026**: Modularized Reddit Scraper directory with independent tests and CI workflows
+* **May 2026**: Modularized Reddit Scraper directory; moved notebooks to `notebooks/` and updated tracking.
 * **Dec 2025**: Performed 2025 scrape with deep research additions and integrated Gemini-graded ratings
 * **Jan 2025**: Experimented with Machine Learning for match pass/fail verification
 * **Nov 2024**: Updated run scripts and performed a full-year run across expanded subreddits
